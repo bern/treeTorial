@@ -1,6 +1,7 @@
 package creator.end.parsing;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +55,7 @@ public class KnowledgeNodeBeanPicker {
 		List<KnowledgeNode> allNodes = new ArrayList<KnowledgeNode>();
 		
 		initializeNodeIndex(false);
-		
+		if(nodeIndex==null){return new ArrayList<KnowledgeNode>();}
 		
 		List<Integer> allIds = nodeIndex.getAllIds();
 		for(int id : allIds){
@@ -79,8 +80,13 @@ public class KnowledgeNodeBeanPicker {
 		NodeIndexBeanPicker niBeanPicker = new NodeIndexBeanPicker();
 		
 		niBeanPicker.setDataDirectory(dataDirectory+"/nodeIndex.xml");
-		niBeanPicker.parseDataDirectory();
-		nodeIndex = niBeanPicker.getNodeIndex();
+		try{			
+			niBeanPicker.parseDataDirectory();
+			nodeIndex = niBeanPicker.getNodeIndex();
+		} catch(Exception e){
+			nodeIndex = null;
+		}
+		
 	}
 	
 	private void validateNodeIndexExists(){
