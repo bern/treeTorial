@@ -1,0 +1,35 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<script type="text/javascript" src="java_script.js" > </script>
+<title>LEFT FRAME</title>
+
+
+</head>
+ <body bgcolor="#FFFFFF">
+</body> 
+<script type="text/javascript">
+<!--
+//-->
+	//Get nodeIndex.xml
+	xmlDoc = getXmlDoc("indexNode.xml");
+	obj = xmlToJson(xmlDoc);
+
+	//get array of all knowledgenodes
+	arrayKnowledgeNodes = getKnowledgeNodes(obj);
+
+	printKnowledgeNodes(arrayKnowledgeNodes);
+	
+	function change_frame(file1)
+{
+	parent.MAINFRAME.document.getElementById("tree").innerHTML="New text!";
+	var obj;
+	
+	for (var i=0;i<arrayKnowledgeNodes.length;i++){ 
+		if(arrayKnowledgeNodes[i].name['#text'] === file1) obj = arrayKnowledgeNodes[i];
+	}
+	
+}
+</script>	
+</html>
