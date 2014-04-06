@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<KnowledgeNode>
+	<name>Dijkstra's algorithm</name>
+	<id>182746348934587839</id>
+	<dependencies>
+		<dependency>
+			<id>987345873459734857987</id>
+			<description>Needed because it is the primary data structure used by Dijkstras</description>
+		<dependency>
+		<dependency>
+			<id>2342597348579643</id>
+			<description>Needed because it is a part of one of the optimizations of Dijkstras</description>
+		<dependency>
+		<dependency>
+			<id>4564658734597348123432</id>
+			<description>Path optimization is the thing Dijkstras is trying to achieve.</description>
+		<dependency>
+	</dependencies>
+	<body>
+		Dijkstras algorithm is a thing that does a thing with stuff. It's <em>really</em> cool.
+		</br>Great! Now you know Dijkstras!
+	</body>
+</KnowledgeNode>

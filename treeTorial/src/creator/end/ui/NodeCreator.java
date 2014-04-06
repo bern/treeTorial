@@ -37,6 +37,8 @@ public class NodeCreator extends JPanel {
 	public static GridBagConstraints c;
 	public static BufferedImage treeTorialLogo;
 	public static JComboBox<String> pred_list;
+	public static JTextArea pred_desc;
+	public static JPanel temp;
 	
 	public NodeCreator() {
 		
@@ -90,7 +92,7 @@ public class NodeCreator extends JPanel {
         buttonPane.add(save_leaf);
         buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		
-		node_pred_label = new JLabel("Predecessors: ");
+		node_pred_label = new JLabel("Predecessors:                 Description: ");
 		name_panel.setBackground(MainFrame.COLOR);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -106,20 +108,25 @@ public class NodeCreator extends JPanel {
 		//c.gridwidth = 200;
 		//c.gridheight = 100;
 		c.ipady = 450;
-		c.ipadx = 575;
+		c.ipadx = 450;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 2;
 		add(scrollPane,c);
 		
 		pred_list = new JComboBox<String>();
+		pred_list.addActionListener(new ComboBoxDemo());
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(13,0,0,0);
 		c.ipady = 0;
 		c.gridx = 0;
 		c.gridy = 3;
-		add(node_pred_label,c);
+		add(node_pred_label,c); 
+		
+		
+		//c.gridx = 1; 
+		//add(new JLabel("Description: "),c);
 		
 		node_pred_panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		//node_pred_panel.setLayout(new BoxLayout(node_pred_panel, BoxLayout.X_AXIS));
@@ -127,21 +134,22 @@ public class NodeCreator extends JPanel {
 		
 		node_pred = new ArrayList<JLabel>();
 		
-		for(int i = 0; i < node_pred.size(); i++) {
-			Border a = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-			Border b = BorderFactory.createLineBorder(Color.BLACK, 1);
-			Border combined = BorderFactory.createCompoundBorder(b, a);
-			node_pred.get(i).setBorder(combined);
-			node_pred_panel.add(node_pred.get(i));
-		}
+		Border a = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+		Border b = BorderFactory.createLineBorder(Color.BLACK, 1);
+		Border combined = BorderFactory.createCompoundBorder(b, a);
 		
 		c.gridx = 0;
 		c.gridy = 4;
 		c.ipadx = 600;
 		c.insets = new Insets(0,0,0,0);
-		c.fill = GridBagConstraints.HORIZONTAL;
+		//c.fill = GridBagConstraints.HORIZONTAL;
+		
+		pred_desc = new JTextArea(1,45);
+		temp = new JPanel();
+		temp.add(pred_desc);
+		temp.setBorder(combined);
 		node_pred_panel.add(pred_list);
-		//node_pred_panel.add(pred_desc);
+		node_pred_panel.add(temp);
 		add(node_pred_panel,c);
 		//
 		buttonPane.setBackground(MainFrame.COLOR);
@@ -161,9 +169,18 @@ public class NodeCreator extends JPanel {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
+			KnowledgeNode x = new KnowledgeNode();
 			if(btnName.equals("save")) {
 				ListCreator.nodes.get(ListCreator.node_list.getSelectedIndex()).setName(node_name.getText());
 				ListCreator.nodes.get(ListCreator.node_list.getSelectedIndex()).setBody(node_body.getText());
+		        String pred_id = (String)pred_list.getSelectedItem();
+				for(int i = 0; i < ListCreator.nodes.size(); i++) {
+					if(pred_id.equals(ListCreator.nodes.get(i).getName())) {
+						x = ListCreator.nodes.get(i);
+						break;
+					}
+				}
+				ListCreator.nodes.get(ListCreator.node_list.getSelectedIndex()).addDescription(x,pred_desc.getText());
 				int length = ListCreator.nodes.size();
 				int index = ListCreator.node_list.getSelectedIndex();
 				
@@ -184,15 +201,50 @@ public class NodeCreator extends JPanel {
 		}
 	}
 	
+	public class ComboBoxDemo implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JComboBox cb = (JComboBox)e.getSource();
+	        String pred_id = (String)cb.getSelectedItem();
+			for(int i = 0; i < ListCreator.nodes.size(); i++) {
+				if(pred_id.equals(ListCreator.nodes.get(i).getName())) {
+					pred_desc.setText(ListCreator.nodes.get(ListCreator.node_list.getSelectedIndex()).getDescription(ListCreator.nodes.get(i)));
+					break;
+				}
+			}
+			updateFields(ListCreator.nodes.get(ListCreator.node_list.getSelectedIndex()));
+	    }
+	}
+	
 	public void updateFields(KnowledgeNode node) {
 		//System.out.println("what happened"+node.getName());
 		node_name.setText(node.getName());
 		node_body.setText(node.getBody());
 		
+		
+		pred_desc = new JTextArea(1,45);
+		
+		System.out.println("hello "+ListCreator.nodes.size());
+		
+		String pred_id = (String)pred_list.getSelectedItem();
+		System.out.println("pred_id = "+pred_id);
+		for(int i = 0; i < ListCreator.nodes.size(); i++) {
+			if(pred_list. getItemCount() == 0 || pred_id.equals(ListCreator.nodes.get(i).getName())) {
+				System.out.println("The description I pulled for "+ListCreator.nodes.get(i).getName()+"which is a depdency of "+node.getName()+" is: "+node.getDescription(ListCreator.nodes.get(i)));
+				pred_desc.setText(node.getDescription(ListCreator.nodes.get(i)));
+				break;
+			}
+		}
+		
+		
+		Border a = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+		Border b = BorderFactory.createLineBorder(Color.BLACK, 1);
+		Border combined = BorderFactory.createCompoundBorder(b, a);
+		
 		int length = node.getDependencies().size();
 		
 		node_pred.clear();
 		pred_list.removeAllItems();
+		temp.removeAll();
 		node_pred_panel.removeAll();
 		
 		node_pred_panel.setBackground(MainFrame.COLOR);
@@ -229,20 +281,15 @@ public class NodeCreator extends JPanel {
 		
 		node_pred_panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		
-		for(int i = node_pred.size()-1; i >= 0; i--) {
-			Border a = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-			Border b = BorderFactory.createLineBorder(Color.BLACK, 1);
-			Border combined = BorderFactory.createCompoundBorder(b, a);
-			//node_pred.get(i).setBorder(combined);
-			//node_pred_panel.add(node_pred.get(i));
-		}
-		
 		c = new GridBagConstraints();
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 4;
+		temp.add(pred_desc);
+		temp.setBorder(combined);
 		node_pred_panel.add(pred_list);
+		node_pred_panel.add(temp);
 		node_pred_panel.updateUI();
 		this.add(node_pred_panel,c);
 	}
